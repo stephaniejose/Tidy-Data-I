@@ -73,6 +73,36 @@ head(beetles4) #it will give the first 6 rows by default
 
 View(beetles4) #opens the file
 
+#Let's use read.table
+beetlesdf <- read.table("dung_beetles_read_1.csv", sep=",",header=T)  # notice how we set the separator
+#for read.table we have to specify that there are headers present 
+
+#these 2 will do read the tables
+read.table("dung_beetles_read_2.txt")
+read.table("dung_beetles_read_3.txt")
+
+#fix these 2
+reading_beetle_data_2 <- read.table("dung_beetles_read_2.txt", sep = "\t", header=T)
+#sep = "\t" is used for txt files instead of "," like csv's
+
+reading_beetle_data_3 <- read.table("dung_beetles_read_3.txt", sep = "\t", header=T, skip = 1)
+#in this case there is an additional row on the top so to not include it "skip" is used. Skip = 1 means skip the first row
+
+library(tidyr)
+
+?fill 
+#it will get confusing for the computer to only have each site number printed only once, so it is important to fill in the empty spaces
+
+#fill(data, ..., .direction = c("down", "up", "downup", "updown"))
+fill(beetlesdf,Site) #replace 'data' with the table name, and the '...' with the names of the columns to fill
+
+beetlesdf <- fill(beetlesdf,Site)  #careful - this is a common source of errors
+
+#Why does this piece of code not run? 
+#because there isn't a column called 'site'
+beetlesdf2 <- read.table("dung_beetles_read_4.txt")
+
+fill(beetlesdf2,Site) 
 
 
 
