@@ -100,9 +100,59 @@ beetlesdf <- fill(beetlesdf,Site)  #careful - this is a common source of errors
 
 #Why does this piece of code not run? 
 #because there isn't a column called 'site'
-beetlesdf2 <- read.table("dung_beetles_read_4.txt")
+beetlesdf4 <- read.table("dung_beetles_read_4.txt", sep = "\t", header=T, na.strings = "-") #na.strings suggests that there is no data present in those areas, however the default on R is "NA" so you must change it to "-" because you want to tell R that the spaces that have "-" needs to be filled.
 
-fill(beetlesdf2,Site) 
+beetlesdf4 <- fill(beetlesdf4,Site)
+
+#THE PIPE
+#Piping is used when there is more than one function applied to a table. R uses piping to take the output of one function, and shove straight into the next.
+#so previously they were two different lines of code but by using piping it just uses one line of code for two different functions.
+beetlesdf <- read.table("dung_beetles_read_1.csv", sep=",",header=T) %>% fill(Site)
+#'%>%' takes the output of one function and puts it straight into the next one
+
+#pivot_longer() lengthens data, increasing the number of row and decreasing the number of columns
+
+?pivot_longer
+#pivot_longer lengthens the data by adding more rows and reducing columns
+
+pivot <- pivot_longer(data=beetlesdf, cols = c("Caccobius_bawangensis", "Catharsius_dayacus", "Catharsius_renaudpauliani", "Copis_agnus", "Copis_ramosiceps", "Copis_sinicus", "Microcopis_doriae", "Microcopis_hidakai"),names_to="Spp")
+
+#data is a data frame to pivot
+
+#cols is the columns to pivot into longer format
+
+#names_to is a character vector specifying the new column or columns to create from the information stored in the column names of data specified by cols
+
+numerical_index_with_pivot <- pivot_longer(data=beetlesdf4, cols = contains('_'), names_to = 'Spp')
+index <- beetlesdf4
+
+?pivot_longer
+
+#pivot_wider
+casesdf <- read.table("WMR2022_reported_cases_1.txt",sep="\t", header=T, na.strings = "") %>% fill(country) 
+
+casesdf <- pivot_wider(casesdf,names_from="method",values_from ="n")
+#this makes the 'method' variables into columns and puts the values of 'n' into these columns
+
+#7
+bigdf <- read.table("WMR2022_reported_cases_2.txt",sep="\t", na.strings = '', header = T) %>% fill(country)
+#this corrects the code for reading in and filled in the countries
+
+bigdf <- pivot_longer(bigdf, cols = starts_with('X'), names_to = 'years')
+
+bigdf <- pivot_wider(bigdf, names_from = 'method', values_from = 'value')
+
+#Can you use the pipe function to achieve the same output?
+bigdf2 <- read.table("WMR2022_reported_cases_2.txt",sep="\t", na.strings = '', header = T) %>% 
+  fill(country) ; pivot_longer(bigdf2, cols = starts_with('X'), names_to = 'years') %>%
+  pivot_wider(bigdf2, id_cols = !errorCondition(), names_from = 'method', values_from = 'value')
+
+??id_cols
+
+bigdf <- pivot_wider(bigdf, cols = starts_with('X'), names_to = 'years')
+
+%>% pivot_wider(data = bigdf, names_from = 'method', values_from = starts_with('X'), id_cols = )
+
 
 
 
